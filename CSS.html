@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快樂寫程式</title>
+    
+    <!-- CSS區塊模型與美化 -->
+    <style>
+        * {
+            box-sizing: border-box; /* 使用網路模版 */
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;/* 選擇字體 */
+            display: flex;                  /* flex容器 */
+            flex-direction: column;         /* flex設定 */
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 60%;
+            max-width: 800px;
+            background: #fff;
+            padding: 30px;
+            margin: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        pre#output {
+            width: 100%;
+            padding: 15px;
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            min-height: 100px;
+            margin-top: 20px;
+        }
+    </style>
+
+    <!-- Pyodide 初始化與執行邏輯設定 -->
+    <script>
+        let pyodide;
+
+        async function initPyodide() {
+            pyodide = await loadPyodide();
+            console.log("Pyodide is ready!");
+        }
+
+        async function runPythonCode() {
+            if (!pyodide) {
+                document.getElementById("output").innerText = "Pyodide 尚未加載完成，請稍候...";
+                return;
+            }
+
+            let code = document.getElementById("pythonCode").value;
+
+            try {
+                let output = await pyodide.runPythonAsync(code);
+                document.getElementById("output").innerText = output;
+            } catch (err) {
+                document.getElementById("output").innerText = "錯誤: " + err;
+            }
+        }
+
+        window.addEventListener("load", async () => {
+            await initPyodide();
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>程式檢查AI小幫手</h1>
+        <h2>輸入 Python 程式碼並執行</h2>
+
+        <textarea id="pythonCode" rows="6" placeholder="輸入 Python 程式碼...">print("Hello, world!")</textarea>
+        <button onclick="runPythonCode()">執行程式</button>
+
+        <h2>輸出結果:</h2>
+        <pre id="output"></pre>
+    </div>
+</body>
+</html>
